@@ -7,8 +7,9 @@ import {
   Form,
   Navbar,
 } from "react-bootstrap";
-import { useAppEditStore } from "../stores/app-edit-store.ts";
+import { useAppEditStore } from "../stores/app-edit.store.ts";
 import { HiOutlineClock } from "react-icons/hi2";
+import { useAppTilesStore } from "../stores/app-tiles.store.ts";
 
 type TopNavBarProps = {
   //
@@ -39,13 +40,22 @@ const TopNavBar: FC<TopNavBarProps> = () => {
 export default TopNavBar;
 
 const EditTilesToolbar = ({ isVisible }: { isVisible: boolean }) => {
+  const { addTile } = useAppTilesStore();
+
+  const emojiList = ["😁", "❤️", "☠️", "🚀", "🎉", "🙏🏻"];
+
   return (
     <ButtonToolbar
       aria-label="Tiles Toolbar"
       className={isVisible ? "" : "invisible"}
     >
       <ButtonGroup className="me-2" aria-label="First group">
-        <Button variant={"primary"}>
+        <Button
+          variant={"primary"}
+          onClick={() =>
+            addTile({ label: emojiList[Math.floor(Math.random() * 5)] })
+          }
+        >
           <HiOutlineClock size={24} />
         </Button>
       </ButtonGroup>
