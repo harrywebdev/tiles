@@ -1,7 +1,7 @@
 import { FC, FormEvent, useState } from "react";
 import {
   AppTile,
-  AppTileType,
+  createClockTile,
   useAppTilesStore,
 } from "../stores/app-tiles.store.ts";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
@@ -9,18 +9,18 @@ import { Alert, Button, Form, Modal } from "react-bootstrap";
 type HandleClockTileModalProps = {
   onAbort: () => void;
   onFinish: (tile: AppTile) => void;
-  updateTile?: AppTile;
+  tileToUpdate?: AppTile;
 };
 
 export const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
   onAbort,
   onFinish,
-  updateTile,
+  tileToUpdate,
 }) => {
   const emojiList = ["😁", "❤️", "☠️", "🚀", "🎉", "🙏🏻"];
   const initLabel =
-    updateTile !== undefined
-      ? updateTile.label
+    tileToUpdate !== undefined
+      ? tileToUpdate.label
       : emojiList[Math.floor(Math.random() * 5)];
 
   const [label, setLabel] = useState(initLabel);
@@ -36,7 +36,9 @@ export const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
       return;
     }
 
-    onFinish({ label, type: AppTileType.Clock });
+    onFinish(
+      tileToUpdate ? { ...tileToUpdate, label } : createClockTile({ label })
+    );
   };
 
   return (
@@ -81,7 +83,7 @@ export const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useClockTileModal = () => {
-  const { addTile } = useAppTilesStore();
+  const { addTile, updateTile } = useAppTilesStore();
   const [isClockTileModalShown, setIsClockTileModalShown] = useState(false);
   const [tileEdited, setTileEdited] = useState<AppTile | undefined>();
 
@@ -93,10 +95,10 @@ export const useClockTileModal = () => {
 
     clockTileModal: isClockTileModalShown && (
       <HandleClockTileModal
-        updateTile={tileEdited}
+        tileToUpdate={tileEdited}
         onAbort={() => setIsClockTileModalShown(false)}
         onFinish={(tile: AppTile) => {
-          addTile(tile);
+          tileEdited ? updateTile(tile) : addTile(tile);
           setIsClockTileModalShown(false);
         }}
       />
