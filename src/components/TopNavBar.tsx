@@ -1,17 +1,16 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, useState } from "react";
 import {
-  Alert,
   Button,
   ButtonGroup,
   ButtonToolbar,
   Container,
   Form,
-  Modal,
   Navbar,
 } from "react-bootstrap";
 import { useAppEditStore } from "../stores/app-edit.store.ts";
 import { HiOutlineClock } from "react-icons/hi2";
 import { AppTile, useAppTilesStore } from "../stores/app-tiles.store.ts";
+import HandleClockTileModal from "./HandleClockTileModal.tsx";
 
 type TopNavBarProps = {
   //
@@ -62,7 +61,7 @@ const EditTilesToolbar = ({ isVisible }: { isVisible: boolean }) => {
       </ButtonToolbar>
 
       {isClockTileModalShown && (
-        <AddClockTileModal
+        <HandleClockTileModal
           onAbort={() => setIsClockTileModalShown(false)}
           onFinish={(tile: AppTile) => {
             addTile(tile);
@@ -71,70 +70,5 @@ const EditTilesToolbar = ({ isVisible }: { isVisible: boolean }) => {
         />
       )}
     </>
-  );
-};
-
-const AddClockTileModal = ({
-  onAbort,
-  onFinish,
-}: {
-  onAbort: () => void;
-  onFinish: (tile: AppTile) => void;
-}) => {
-  const emojiList = ["😁", "❤️", "☠️", "🚀", "🎉", "🙏🏻"];
-
-  const [label, setLabel] = useState(emojiList[Math.floor(Math.random() * 5)]);
-
-  const handleClose = () => onAbort();
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      return;
-    }
-
-    onFinish({ label });
-  };
-
-  return (
-    <Modal show={true} onHide={handleClose} centered={true}>
-      <Form onSubmit={handleSubmit}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add Counter Tile</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          <Alert>This tile resets every day.</Alert>
-
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>Tile Label</Form.Label>
-
-            <Form.Control
-              type="text"
-              placeholder="Title, emoji,..."
-              value={label}
-              onChange={(event) => setLabel(event.currentTarget.value)}
-            />
-
-            <Form.Text className="text-muted">
-              Keep it short and precise
-            </Form.Text>
-          </Form.Group>
-        </Modal.Body>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-
-          <Button variant="primary" type="submit">
-            Add Tile
-          </Button>
-        </Modal.Footer>
-      </Form>
-    </Modal>
   );
 };
