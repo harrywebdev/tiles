@@ -1,5 +1,12 @@
 import { FC } from "react";
-import { Container, Form, Navbar } from "react-bootstrap";
+import {
+  Button,
+  ButtonGroup,
+  ButtonToolbar,
+  Container,
+  Form,
+  Navbar,
+} from "react-bootstrap";
 import { useAppEditStore } from "../stores/app-edit-store.ts";
 
 type TopNavBarProps = {
@@ -11,7 +18,9 @@ const TopNavBar: FC<TopNavBarProps> = () => {
 
   return (
     <Navbar bg="light" expand="lg">
-      <Container className={"justify-content-end"}>
+      <Container className={"justify-content-between"}>
+        <EditTilesToolbar isVisible={isEditing} />
+
         <Form>
           <Form.Check
             type="switch"
@@ -27,3 +36,16 @@ const TopNavBar: FC<TopNavBarProps> = () => {
 };
 
 export default TopNavBar;
+
+const EditTilesToolbar = ({ isVisible }: { isVisible: boolean }) => {
+  return (
+    <ButtonToolbar
+      aria-label="Tiles Toolbar"
+      className={isVisible ? "" : "invisible"}
+    >
+      <ButtonGroup className="me-2" aria-label="First group">
+        <Button size={"sm"}>1</Button>
+      </ButtonGroup>
+    </ButtonToolbar>
+  );
+};
