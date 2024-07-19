@@ -1,5 +1,9 @@
 import { FC, FormEvent, useState } from "react";
-import { AppTile } from "../stores/app-tiles.store.ts";
+import {
+  AppTile,
+  AppTileType,
+  useAppTilesStore,
+} from "../stores/app-tiles.store.ts";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 
 type HandleClockTileModalProps = {
@@ -8,7 +12,7 @@ type HandleClockTileModalProps = {
   updateTile?: AppTile;
 };
 
-const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
+export const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
   onAbort,
   onFinish,
   updateTile,
@@ -25,14 +29,14 @@ const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
+    if (!form.checkValidity()) {
       event.preventDefault();
       event.stopPropagation();
 
       return;
     }
 
-    onFinish({ label });
+    onFinish({ label, type: AppTileType.Clock });
   };
 
   return (
@@ -75,4 +79,27 @@ const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
   );
 };
 
-export default HandleClockTileModal;
+// eslint-disable-next-line react-refresh/only-export-components
+export const useClockTileModal = () => {
+  const { addTile } = useAppTilesStore();
+  const [isClockTileModalShown, setIsClockTileModalShown] = useState(false);
+  const [tileEdited, setTileEdited] = useState<AppTile | undefined>();
+
+  return {
+    showClockTileModal: (tile?: AppTile) => {
+      setTileEdited(tile);
+      setIsClockTileModalShown(true);
+    },
+
+    clockTileModal: isClockTileModalShown && (
+      <HandleClockTileModal
+        updateTile={tileEdited}
+        onAbort={() => setIsClockTileModalShown(false)}
+        onFinish={(tile: AppTile) => {
+          addTile(tile);
+          setIsClockTileModalShown(false);
+        }}
+      />
+    ),
+  };
+};

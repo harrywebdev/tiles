@@ -1,7 +1,13 @@
 import { FC } from "react";
 import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 import { useAppEditStore } from "../stores/app-edit.store.ts";
-import { AppTile, useAppTilesStore } from "../stores/app-tiles.store.ts";
+import {
+  AppTile,
+  AppTileType,
+  useAppTilesStore,
+} from "../stores/app-tiles.store.ts";
+import { isStrictNever } from "../utils";
+import { useClockTileModal } from "./HandleClockTileModal.tsx";
 
 type TilesCanvasProps = {
   //
@@ -35,9 +41,27 @@ const TilesCanvas: FC<TilesCanvasProps> = () => {
 export default TilesCanvas;
 
 const Tile = ({ tile }: { tile: AppTile }) => {
+  const { showClockTileModal, clockTileModal } = useClockTileModal();
+
+  let buttonOnClick = () => {
+    // no-op
+  };
+  switch (tile.type) {
+    case AppTileType.Clock: {
+      buttonOnClick = () => showClockTileModal(tile);
+      break;
+    }
+    default:
+      isStrictNever(tile.type);
+  }
+
   return (
-    <Button variant={"outline-primary"} size={"lg"}>
-      {tile.label}
-    </Button>
+    <>
+      <Button variant={"outline-primary"} size={"lg"} onClick={buttonOnClick}>
+        {tile.label}
+      </Button>
+
+      {clockTileModal}
+    </>
   );
 };

@@ -1,6 +1,11 @@
 import { create } from "zustand";
 
+export enum AppTileType {
+  Clock = "clock",
+}
+
 export interface AppTile {
+  type: AppTileType;
   label: string;
 }
 

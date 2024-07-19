@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import {
   Button,
   ButtonGroup,
@@ -9,8 +9,7 @@ import {
 } from "react-bootstrap";
 import { useAppEditStore } from "../stores/app-edit.store.ts";
 import { HiOutlineClock } from "react-icons/hi2";
-import { AppTile, useAppTilesStore } from "../stores/app-tiles.store.ts";
-import HandleClockTileModal from "./HandleClockTileModal.tsx";
+import { useClockTileModal } from "./HandleClockTileModal.tsx";
 
 type TopNavBarProps = {
   //
@@ -41,8 +40,7 @@ const TopNavBar: FC<TopNavBarProps> = () => {
 export default TopNavBar;
 
 const EditTilesToolbar = ({ isVisible }: { isVisible: boolean }) => {
-  const { addTile } = useAppTilesStore();
-  const [isClockTileModalShown, setIsClockTileModalShown] = useState(false);
+  const { showClockTileModal, clockTileModal } = useClockTileModal();
 
   return (
     <>
@@ -51,24 +49,13 @@ const EditTilesToolbar = ({ isVisible }: { isVisible: boolean }) => {
         className={isVisible ? "" : "invisible"}
       >
         <ButtonGroup className="me-2" aria-label="First group">
-          <Button
-            variant={"primary"}
-            onClick={() => setIsClockTileModalShown(true)}
-          >
+          <Button variant={"primary"} onClick={() => showClockTileModal()}>
             <HiOutlineClock size={24} />
           </Button>
         </ButtonGroup>
       </ButtonToolbar>
 
-      {isClockTileModalShown && (
-        <HandleClockTileModal
-          onAbort={() => setIsClockTileModalShown(false)}
-          onFinish={(tile: AppTile) => {
-            addTile(tile);
-            setIsClockTileModalShown(false);
-          }}
-        />
-      )}
+      {clockTileModal}
     </>
   );
 };
