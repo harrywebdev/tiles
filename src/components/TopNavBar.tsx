@@ -8,6 +8,7 @@ import {
   Navbar,
 } from "react-bootstrap";
 import { useAppEditStore } from "../stores/app-edit-store.ts";
+import { HiOutlineClock } from "react-icons/hi2";
 
 type TopNavBarProps = {
   //
@@ -44,7 +45,9 @@ const EditTilesToolbar = ({ isVisible }: { isVisible: boolean }) => {
       className={isVisible ? "" : "invisible"}
     >
       <ButtonGroup className="me-2" aria-label="First group">
-        <Button size={"sm"}>1</Button>
+        <Button variant={"primary"}>
+          <HiOutlineClock size={24} />
+        </Button>
       </ButtonGroup>
     </ButtonToolbar>
   );
