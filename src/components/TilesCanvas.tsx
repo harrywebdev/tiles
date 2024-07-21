@@ -14,28 +14,52 @@ type TilesCanvasProps = {
   //
 };
 
+type TilesWithLayoutRow = {
+  id: string;
+  tiles: AppTile[];
+};
+
 const TilesCanvas: FC<TilesCanvasProps> = () => {
   debug("TilesCanvas render");
 
   const { isEditing } = useAppEditStore();
   const { tiles } = useAppTilesStore();
 
+  const tilesWithLayout = tiles.reduce((acc, tile, tileIndex) => {
+    const rowIndex = Math.floor(tileIndex / 4);
+
+    // init
+    if (!acc[rowIndex]) {
+      acc[rowIndex] = {
+        id: "",
+        tiles: [],
+      };
+    }
+
+    acc[rowIndex].id += tile.id;
+    acc[rowIndex].tiles.push(tile);
+
+    return acc;
+  }, [] as TilesWithLayoutRow[]);
+
   return (
     <div
       className={`flex-grow-1 d-flex ${isEditing ? "bg-white" : "bg-light"}`}
     >
       <Container>
-        <Row>
-          {tiles.map((tile, index) => (
-            <Col xs={3} key={`${index}_${tile.label}`} className={"p-3"}>
-              <Tile tile={tile} />
-            </Col>
-          ))}
+        {tiles.length === 0 ? (
+          <Alert variant={"info"}>No tiles yet.</Alert>
+        ) : null}
 
-          {tiles.length === 0 ? (
-            <Alert variant={"info"}>No tiles yet.</Alert>
-          ) : null}
-        </Row>
+        {tilesWithLayout.map((row) => (
+          <Row key={row.id}>
+            {row.tiles.map((tile) => (
+              <Col xs={12 / row.tiles.length} key={tile.id} className={"p-3"}>
+                <Tile tile={tile} />
+              </Col>
+            ))}
+          </Row>
+        ))}
       </Container>
     </div>
   );
