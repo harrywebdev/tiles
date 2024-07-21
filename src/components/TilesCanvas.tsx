@@ -8,12 +8,15 @@ import {
 } from "../stores/app-tiles.store.ts";
 import { isStrictNever } from "../utils";
 import { useClockTileModal } from "./HandleClockTileModal.tsx";
+import { debug } from "../utils/console.ts";
 
 type TilesCanvasProps = {
   //
 };
 
 const TilesCanvas: FC<TilesCanvasProps> = () => {
+  debug("TilesCanvas render");
+
   const { isEditing } = useAppEditStore();
   const { tiles } = useAppTilesStore();
 
