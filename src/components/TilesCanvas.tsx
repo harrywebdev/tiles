@@ -68,18 +68,24 @@ const TilesCanvas: FC<TilesCanvasProps> = () => {
 export default TilesCanvas;
 
 const Tile = ({ tile }: { tile: AppTile }) => {
+  debug(`Tiles render (${tile.label})`);
+
+  const { isEditing } = useAppEditStore();
   const { showClockTileModal, clockTileModal } = useClockTileModal();
 
   let buttonOnClick = () => {
     // no-op
   };
-  switch (tile.type) {
-    case AppTileType.Clock: {
-      buttonOnClick = () => showClockTileModal(tile);
-      break;
+
+  if (isEditing) {
+    switch (tile.type) {
+      case AppTileType.Clock: {
+        buttonOnClick = () => showClockTileModal(tile);
+        break;
+      }
+      default:
+        isStrictNever(tile.type);
     }
-    default:
-      isStrictNever(tile.type);
   }
 
   return (
