@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 import { useAppEditStore } from "../stores/app-edit.store.ts";
 import {
@@ -9,6 +9,7 @@ import {
 import { isStrictNever } from "../utils";
 import { useClockTileModal } from "./HandleClockTileModal.tsx";
 import { debug } from "../utils/console.ts";
+import { useTilesLogRecordsStore } from "../stores/tiles-log-records.store.ts";
 
 type TilesCanvasProps = {
   //
@@ -72,6 +73,13 @@ const Tile = ({ tile }: { tile: AppTile }) => {
 
   const { isEditing } = useAppEditStore();
   const { showClockTileModal, clockTileModal } = useClockTileModal();
+  const { getTileLogRecords, createTileLogRecord } = useTilesLogRecordsStore();
+  const tileLogRecords = useMemo(
+    () => getTileLogRecords(tile.id, "today"),
+    [getTileLogRecords, tile.id]
+  );
+
+  const isPressed = tileLogRecords.length > 0;
 
   let buttonOnClick = () => {
     // no-op
@@ -86,11 +94,28 @@ const Tile = ({ tile }: { tile: AppTile }) => {
       default:
         isStrictNever(tile.type);
     }
+  } else {
+    switch (tile.type) {
+      case AppTileType.Clock: {
+        buttonOnClick = isPressed
+          ? () => {
+              // TODO: confirm to delete record
+            }
+          : () => createTileLogRecord(tile);
+        break;
+      }
+      default:
+        isStrictNever(tile.type);
+    }
   }
 
   return (
     <>
-      <Button variant={"outline-primary"} size={"lg"} onClick={buttonOnClick}>
+      <Button
+        variant={`${isPressed ? "primary" : "outline-primary"}`}
+        size={"lg"}
+        onClick={buttonOnClick}
+      >
         {tile.label}
       </Button>
 
