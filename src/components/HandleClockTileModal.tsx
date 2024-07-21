@@ -17,11 +17,12 @@ export const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
   onFinish,
   tileToUpdate,
 }) => {
+  const isEditing = tileToUpdate !== undefined;
+
   const emojiList = ["😁", "❤️", "☠️", "🚀", "🎉", "🙏🏻"];
-  const initLabel =
-    tileToUpdate !== undefined
-      ? tileToUpdate.label
-      : emojiList[Math.floor(Math.random() * 5)];
+  const initLabel = isEditing
+    ? tileToUpdate.label
+    : emojiList[Math.floor(Math.random() * 5)];
 
   const [label, setLabel] = useState(initLabel);
 
@@ -45,7 +46,7 @@ export const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
     <Modal show={true} onHide={handleClose} centered={true}>
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Counter Tile</Modal.Title>
+          <Modal.Title>{isEditing ? "Edit" : "Add"} Counter Tile</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
