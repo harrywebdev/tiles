@@ -17,7 +17,7 @@ interface AppTilesStore {
   updateTile: (tile: AppTile) => void;
 }
 
-export const useAppTilesStore = create<AppTilesStore>((set) => ({
+export const useAppTilesStore = create<AppTilesStore>()((set) => ({
   tiles: [],
 
   addTile: (newTile) => set((state) => ({ tiles: [...state.tiles, newTile] })),

@@ -5,7 +5,7 @@ interface AppEditStore {
   toggleIsEditing: () => void;
 }
 
-export const useAppEditStore = create<AppEditStore>((set) => ({
+export const useAppEditStore = create<AppEditStore>()((set) => ({
   isEditing: false,
   toggleIsEditing: () => set((state) => ({ isEditing: !state.isEditing })),
 }));
