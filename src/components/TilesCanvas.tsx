@@ -73,10 +73,19 @@ const Tile = ({ tile }: { tile: AppTile }) => {
 
   const { isEditing } = useAppEditStore();
   const { showClockTileModal, clockTileModal } = useClockTileModal();
-  const { getTileLogRecords, createTileLogRecord } = useTilesLogRecordsStore();
+  const {
+    logRecords,
+    getTileLogRecords,
+    createTileLogRecord,
+    deleteTileLogRecord,
+  } = useTilesLogRecordsStore();
+
   const tileLogRecords = useMemo(
     () => getTileLogRecords(tile.id, "today"),
-    [getTileLogRecords, tile.id]
+    // reason is, that the `getTileLogRecords` reference doesn't change, when `logRecords` change
+    // so after update happens, we need to re-render (re-fetch the tileLogRecords)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [logRecords, getTileLogRecords, tile.id]
   );
 
   const isPressed = tileLogRecords.length > 0;
@@ -99,7 +108,11 @@ const Tile = ({ tile }: { tile: AppTile }) => {
       case AppTileType.Clock: {
         buttonOnClick = isPressed
           ? () => {
-              // TODO: confirm to delete record
+              if (confirm("Are you sure you want to undo this log?")) {
+                // get last item of `tileLogRecords`
+                const lastTileLogRecord = tileLogRecords.slice(-1)[0];
+                deleteTileLogRecord(lastTileLogRecord);
+              }
             }
           : () => createTileLogRecord(tile);
         break;

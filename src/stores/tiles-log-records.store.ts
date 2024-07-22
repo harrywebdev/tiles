@@ -3,8 +3,10 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { StoreStorageKey } from "./types.ts";
 import { AppTile } from "./app-tiles.store.ts";
 import { format } from "date-fns";
+import { v4 as uuidv4 } from "uuid";
 
 interface TilesLogRecord {
+  id: string;
   tile: AppTile;
   ts: Date;
 }
@@ -12,6 +14,7 @@ interface TilesLogRecord {
 interface TilesLogRecordsStore {
   logRecords: TilesLogRecord[];
   createTileLogRecord: (tileToLog: AppTile) => void;
+  deleteTileLogRecord: (tileLogToDelete: TilesLogRecord) => void;
   getTileLogRecords: (
     tileId: AppTile["id"],
     period: "today" | "all"
@@ -28,11 +31,20 @@ export const useTilesLogRecordsStore = create<TilesLogRecordsStore>()(
           logRecords: [
             ...get().logRecords,
             {
+              id: uuidv4(),
               tile: tile,
               ts: new Date(),
             },
           ],
         }),
+
+      deleteTileLogRecord: (tileLogRecordToDelete) => {
+        set({
+          logRecords: get().logRecords.filter(
+            (lr) => lr.id !== tileLogRecordToDelete.id
+          ),
+        });
+      },
 
       getTileLogRecords: (tileId, period) =>
         get().logRecords.reduce(
