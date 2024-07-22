@@ -74,7 +74,7 @@ export const HandleClockTileModal: FC<HandleClockTileModalProps> = ({
           </Button>
 
           <Button variant="primary" type="submit">
-            Add Tile
+            Save
           </Button>
         </Modal.Footer>
       </Form>
